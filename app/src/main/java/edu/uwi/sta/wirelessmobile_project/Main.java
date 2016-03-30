@@ -50,7 +50,5 @@ public class Main extends Activity implements ZXingScannerView.ResultHandler {
         mScannerView.resumeCameraPreview(this);
     }
 
-    void setFlash(Camera.Parameters parameters){
-        parameters.set("flash-value", "on");
-    }
+    
 }

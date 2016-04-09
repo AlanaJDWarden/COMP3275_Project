@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -24,6 +25,7 @@ public class Main extends Activity implements ZXingScannerView.ResultHandler {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
+        Firebase.setAndroidContext(this);
         setContentView(mScannerView);
     }
 

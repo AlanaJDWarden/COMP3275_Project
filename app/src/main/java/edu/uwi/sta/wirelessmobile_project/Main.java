@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -24,7 +25,10 @@ public class Main extends Activity implements ZXingScannerView.ResultHandler {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
+        Firebase.setAndroidContext(this);
         setContentView(mScannerView);
+        Firebase myFirebaseRef = new Firebase("https://comp3275project.firebaseio.com/");
+//        myFirebaseRef.child("message").setValue("Learning Firebase");
     }
 
     @Override
@@ -43,12 +47,16 @@ public class Main extends Activity implements ZXingScannerView.ResultHandler {
     @Override
     public void handleResult(Result rawResult) {
         // Do something with the result here
-        Toast.makeText(this,rawResult.getText(),Toast.LENGTH_SHORT).show(); // Prints scan results
+        Toast.makeText(this, rawResult.getText(), Toast.LENGTH_SHORT).show(); // Prints scan results
+
+        Firebase myFirebaseRef = new Firebase("https://comp3275project.firebaseio.com/students");
+        myFirebaseRef.child("student").setValue(rawResult.getText());
+
         //Toast.makeText(this, rawResult.getBarcodeFormat().toString(),Toast.LENGTH_SHORT).show(); // Prints the scan format (qrcode, pdf417 etc.)
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
 
-    
+
 }

@@ -14,6 +14,7 @@ import com.firebase.client.Firebase;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Main extends AppCompatActivity {
     EditText course;
@@ -33,14 +34,28 @@ public class Main extends AppCompatActivity {
     }
 
     public void takeAttendance(View view){
-        courseCode=course.getText().toString();
-        Intent intent = new Intent(Main.this,Scanner.class);
-        intent.putExtra("course_code",courseCode);
-        intent.putExtra("start_time",stime);
-        intent.putExtra("end_time",etime);
-        Toast.makeText(getApplicationContext(),courseCode+"  "+stime + " - "+etime ,Toast.LENGTH_LONG).show();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        Date startTime=null,endTime=null,currTime=null;
+        try{
+            startTime=sdf.parse(stime);
+            endTime=sdf.parse(etime);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        if(endTime.compareTo(startTime)<0) {
+            Toast.makeText(getApplicationContext(), "INVALID START AND END TIMES FOR COURSE", Toast.LENGTH_SHORT).show();
+        }
+        else {
 
-        startActivity(intent);
+            courseCode = course.getText().toString();
+            Intent intent = new Intent(Main.this, Scanner.class);
+            intent.putExtra("course_code", courseCode);
+            intent.putExtra("start_time", stime);
+            intent.putExtra("end_time", etime);
+            Toast.makeText(getApplicationContext(), courseCode + "  " + stime + " - " + etime, Toast.LENGTH_LONG).show();
+            startActivity(intent);
+        }
     }
 
    public void startTime(View view){

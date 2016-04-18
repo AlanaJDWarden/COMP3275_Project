@@ -1,54 +1,83 @@
 package edu.uwi.sta.wirelessmobile_project;
 
-import android.app.Activity;
-import android.hardware.Camera;
+import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.zxing.Result;
+import com.firebase.client.Firebase;
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-public class Main extends Activity implements ZXingScannerView.ResultHandler {
-    private ZXingScannerView mScannerView;
-
-    @Override
-    protected void onCreate(Bundle state) {
-        super.onCreate(state);
-        mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
-        setContentView(mScannerView);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
-    }
+public class Main extends AppCompatActivity {
+    EditText course;
+    String stime=new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
+    String etime=new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
+    String courseCode;
+    Calendar cal;
+    Firebase firebaseRef;
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        course=(EditText)findViewById(R.id.txt_courseCode);
     }
 
-    @Override
-    public void handleResult(Result rawResult) {
-        // Do something with the result here
-        Toast.makeText(this,rawResult.getText(),Toast.LENGTH_SHORT).show(); // Prints scan results
-        //Toast.makeText(this, rawResult.getBarcodeFormat().toString(),Toast.LENGTH_SHORT).show(); // Prints the scan format (qrcode, pdf417 etc.)
+    public void takeAttendance(View view){
+        courseCode=course.getText().toString();
+        Intent intent = new Intent(Main.this,Scanner.class);
+        intent.putExtra("course_code",courseCode);
+        intent.putExtra("start_time",stime);
+        intent.putExtra("end_time",etime);
+        Toast.makeText(getApplicationContext(),courseCode+"  "+stime + " - "+etime ,Toast.LENGTH_LONG).show();
 
-        // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+        startActivity(intent);
     }
 
-    
+   public void startTime(View view){
+        cal=Calendar.getInstance();
+        TimePickerDialog start = new TimePickerDialog(this,new TimePickerDialog.OnTimeSetListener() {
+           @Override
+           public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+               SimpleDateFormat format;
+               Calendar calendar = Calendar.getInstance();
+               calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+               calendar.set(Calendar.MINUTE, minute);
+               format = new SimpleDateFormat("HH:mm");
+               stime = format.format(calendar.getTime());
+           }
+       }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
+       start.show();
+   }
+
+    public void endTime(View view){
+        cal=Calendar.getInstance();
+        TimePickerDialog end = new TimePickerDialog(this,
+            new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute){
+                SimpleDateFormat format;
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                format = new SimpleDateFormat("HH:mm");
+                etime = format.format(calendar.getTime());
+            }
+        }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
+        end.show();
+    }
+
+    public void searchRecords(View view){
+        Intent intent = new Intent(Main.this,Attendance.class);
+        startActivity(intent);
+    }
 }

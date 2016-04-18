@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="edu.uwi.sta.wirelessmobile_project.Main">
+    tools:context=".Scanner">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"

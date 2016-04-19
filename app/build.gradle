@@ -14,9 +14,13 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-//            multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
     }
 }
 
@@ -26,5 +30,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'me.dm7.barcodescanner:zxing:1.8.4'
-//    compile 'com.firebase:firebase-client-android:2.5.2+'
+    compile 'com.firebase:firebase-client-android:2.5.2'
 }

@@ -1,6 +1,6 @@
 package edu.uwi.sta.wirelessmobile_project;
 
-
+//STUDENT RECORD CLASS
 public class StudentRecord {
     private String id;
     private String time;

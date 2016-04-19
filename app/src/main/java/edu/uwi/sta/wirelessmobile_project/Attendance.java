@@ -51,6 +51,7 @@ public class Attendance extends AppCompatActivity {
         studentRecords.setAdapter(adapter);
     }
 
+    //GET DATE FROM DATEPICKER
     public void getDate(View view){
         cal=Calendar.getInstance();
 
@@ -67,6 +68,7 @@ public class Attendance extends AppCompatActivity {
         datePicker.show();
     }
 
+    //GET START TIME OF CLASS FROM TIME PICKER
     public void startTime(View view){
         cal=Calendar.getInstance();
         TimePickerDialog start = new TimePickerDialog(this,new TimePickerDialog.OnTimeSetListener() {
@@ -82,6 +84,7 @@ public class Attendance extends AppCompatActivity {
         start.show();
     }
 
+    //GET END TIME OF CLASS FROM TIME PICKER
     public void endTime(View view){
         cal=Calendar.getInstance();
         TimePickerDialog end = new TimePickerDialog(this,
@@ -98,6 +101,7 @@ public class Attendance extends AppCompatActivity {
         end.show();
     }
 
+    //SEARCH DATABASE RECORDS FOR ALL RECORDS FOR PARTICULAR CLASS AT DATE FOR START-END TIMES
     public void search(View view){
         courseCode=course.getText().toString();
 

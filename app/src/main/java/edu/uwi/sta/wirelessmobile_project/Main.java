@@ -22,7 +22,6 @@ public class Main extends AppCompatActivity {
     String etime=new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
     String courseCode;
     Calendar cal;
-    Firebase firebaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +32,7 @@ public class Main extends AppCompatActivity {
         course=(EditText)findViewById(R.id.txt_courseCode);
     }
 
+    //START SCANNING ACTIVITY
     public void takeAttendance(View view){
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Date startTime=null,endTime=null,currTime=null;
@@ -47,7 +47,6 @@ public class Main extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "INVALID START AND END TIMES FOR COURSE", Toast.LENGTH_SHORT).show();
         }
         else {
-
             courseCode = course.getText().toString();
             Intent intent = new Intent(Main.this, Scanner.class);
             intent.putExtra("course_code", courseCode);
@@ -57,8 +56,8 @@ public class Main extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-   public void startTime(View view){
+    //GET START TIME OF CLASS FROM TIME PICKER
+    public void startTime(View view){
         cal=Calendar.getInstance();
         TimePickerDialog start = new TimePickerDialog(this,new TimePickerDialog.OnTimeSetListener() {
            @Override
@@ -72,8 +71,9 @@ public class Main extends AppCompatActivity {
            }
        }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
        start.show();
-   }
+    }
 
+    //GET END TIME OF CLASS FROM TIME PICKER
     public void endTime(View view){
         cal=Calendar.getInstance();
         TimePickerDialog end = new TimePickerDialog(this,
@@ -91,6 +91,7 @@ public class Main extends AppCompatActivity {
         end.show();
     }
 
+    //START VIEW RECORDS ACTIVITY
     public void searchRecords(View view){
         Intent intent = new Intent(Main.this,Attendance.class);
         startActivity(intent);

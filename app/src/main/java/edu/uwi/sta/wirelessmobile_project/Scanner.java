@@ -34,6 +34,7 @@ public class Scanner extends Activity implements ZXingScannerView.ResultHandler 
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
+
         Firebase.setAndroidContext(this);
         firebaseRef = new Firebase("https://comp-3275project.firebaseio.com/");
 
@@ -41,10 +42,22 @@ public class Scanner extends Activity implements ZXingScannerView.ResultHandler 
         course_code=(String)bundle.get("course_code");
         start_time=(String)bundle.get("start_time");
         end_time=(String)bundle.get("end_time");
+
         Toast.makeText(getApplicationContext(),course_code+"  "+start_time + " - "+end_time ,Toast.LENGTH_LONG).show();
         scan();
     }
 
+    //START SCANNING CHECKS FOR CAMERA PERMISSIONS AND REQUEST IF THEY DONT EXIST
+    public void scan(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+        }
+        else {
+            setContentView(mScannerView);
+        }
+    }
+
+    //OCCURS ON RESUMPTION OF ACTIVITY
     @Override
     public void onResume() {
         super.onResume();
@@ -52,17 +65,37 @@ public class Scanner extends Activity implements ZXingScannerView.ResultHandler 
         mScannerView.startCamera();          // Start camera on resume
     }
 
+    //OCCURS WHEN LEAVE SCANNING ACTIVITY
     @Override
     public void onPause() {
         super.onPause();
         mScannerView.stopCamera();           // Stop camera on pause
     }
+
+    //RESTART SCANNING
     public void restartCamera(){
         mScannerView.stopCamera();
         mScannerView.setResultHandler(this);
         mScannerView.startCamera();
     }
 
+    //RESULT FROM REQUEST CAMERA PERMISSION
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                    scan();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"CAMERA ACCESS PERMISSIONS MUST BE GRANTED FOR THIS TO WORK",Toast.LENGTH_LONG).show();
+                    scan();
+                }
+                return;
+            }
+        }
+    }
+
+    //HANDLES THE RESULT AFTER SCANNING THE BARCODE
     @Override
     public void handleResult(Result rawResult) {
         Toast.makeText(this,rawResult.getText(),Toast.LENGTH_SHORT).show(); // Prints scan results
@@ -116,30 +149,7 @@ public class Scanner extends Activity implements ZXingScannerView.ResultHandler 
         //mScannerView.resumeCameraPreview(this);
     }
 
-    public void scan(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
-        }
-        else {
-            setContentView(mScannerView);
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
-        switch (requestCode) {
-            case CAMERA_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                    scan();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"CAMERA ACCESS PERMISSIONS MUST BE GRANTED FOR THIS TO WORK",Toast.LENGTH_LONG).show();
-                    scan();
-                }
-                return;
-            }
-        }
-    }
-
+    //ADDS RECORD TO FIREBASE FOR USER BARCODE
     public void addRecord(String id,String date,String time){
         Map map = new HashMap();
         map.put("id",id);

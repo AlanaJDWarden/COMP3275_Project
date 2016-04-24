@@ -1,5 +1,23 @@
 <resources>
-    <string name="app_name">Wireless&amp;Mobile_Project</string>
+    <string name="app_name">Roll Call</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Main</string>
+    <string name="title_activity_view_pager">ViewPagerActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_test">test</string>
+
+    <string-array name="menu_array">
+        <item>Enter Class Details</item>
+        <item>Scanner</item>
+        <item>View Records</item>
+    </string-array>
+
+    <string-array name="menu_images">
+        <item>@drawable/class_details</item>
+        <item>@drawable/id_scanner</item>
+        <item>@drawable/records</item>
+    </string-array>
 </resources>

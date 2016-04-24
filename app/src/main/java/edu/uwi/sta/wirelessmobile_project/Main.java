@@ -1,12 +1,24 @@
 package edu.uwi.sta.wirelessmobile_project;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -24,13 +36,91 @@ public class Main extends AppCompatActivity {
     Calendar cal;
     Firebase firebaseRef;
 
+    public class ItemAdapter extends ArrayAdapter<String> {
+        public ItemAdapter(Context context, String[] items){
+            super(context, 0, items);
+        }
+        public View getView(int position, View v, ViewGroup p){
+            v = LayoutInflater.from(getContext()).inflate(R.layout.menu_adapter, p, false);
+            String item = getItem(position);
+            String [] itemName = getContext().getResources().getStringArray(R.array.menu_array);
+            TypedArray itemImages = getContext().getResources().obtainTypedArray(R.array.menu_images);
+            ((TextView)v.findViewById(R.id.item_txt)).setText(item);
+            ((ImageView)v.findViewById(R.id.img_icon)).setImageResource(itemImages.getResourceId(position, 0));
+            return v;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        course=(EditText)findViewById(R.id.txt_courseCode);
+//        course=(EditText)findViewById(R.id.txt_courseCode);
+        ListView lv = (ListView)findViewById(R.id.items_list);
+        String[] items = getResources().getStringArray(R.array.menu_array);
+        ArrayAdapter adapter = new ItemAdapter(this, items);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0){
+                    cal = Calendar.getInstance();
+                    final AlertDialog.Builder builder1 = new AlertDialog.Builder(Main.this);
+                    final View time1 = new View(Main.this);
+                    builder1.setTitle("Set Class Details");
+//                    builder1.setMessage();
+//                    builder1.setView(time1);
+                    builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(Main.this,"Details not set", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        }
+                    });
+                    builder1.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(Main.this);
+                            alertDialog.setTitle("Course");
+                            alertDialog.setMessage("Enter Course Code");
+                            final EditText input = new EditText(Main.this);
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT);
+                            input.setLayoutParams(lp);
+                            alertDialog.setView(input);
+                            alertDialog.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    courseCode = input.getText().toString();
+                                }
+                            });
+                            alertDialog.setNegativeButton("NO",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            endTime(time1);
+                            startTime(time1);
+                            alertDialog.show();
+
+                        }
+                    });
+                    builder1.show();
+
+
+                }
+                else if(position == 1){
+                    takeAttendance(view);
+                }
+                else if(position == 2){
+                    searchRecords(view);
+                }
+            }
+        });
     }
 
     public void takeAttendance(View view){
@@ -48,7 +138,7 @@ public class Main extends AppCompatActivity {
         }
         else {
 
-            courseCode = course.getText().toString();
+//            courseCode = course.getText().toString();
             Intent intent = new Intent(Main.this, Scanner.class);
             intent.putExtra("course_code", courseCode);
             intent.putExtra("start_time", stime);
@@ -71,6 +161,7 @@ public class Main extends AppCompatActivity {
                stime = format.format(calendar.getTime());
            }
        }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
+       start.setMessage("Set the start time of the class");
        start.show();
    }
 
@@ -88,6 +179,7 @@ public class Main extends AppCompatActivity {
                 etime = format.format(calendar.getTime());
             }
         }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
+        end.setMessage("Set the end time of the class");
         end.show();
     }
 
@@ -95,4 +187,5 @@ public class Main extends AppCompatActivity {
         Intent intent = new Intent(Main.this,Attendance.class);
         startActivity(intent);
     }
+
 }

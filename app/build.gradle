@@ -31,4 +31,5 @@ dependencies {
     compile 'com.android.support:design:23.2.1'
     compile 'me.dm7.barcodescanner:zxing:1.8.4'
     compile 'com.firebase:firebase-client-android:2.5.2'
+    compile 'com.android.support:support-v4:23.2.1'
 }

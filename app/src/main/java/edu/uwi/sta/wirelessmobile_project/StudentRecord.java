@@ -6,9 +6,6 @@ public class StudentRecord {
     private String time;
     private String course;
 
-    StudentRecord(){
-
-    };
     StudentRecord(String Id,String time, String course){
         this.id =Id;
         this.time =time;
